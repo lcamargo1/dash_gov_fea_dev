@@ -34,64 +34,69 @@ df_selection = df.query(
     "assignee_username == @nome"
 )
 
-def Graphs():
-    df_selection2 = df_selection.pivot_table(index="assignee_username",columns="tipo_atividade",values="id_tarefa",aggfunc="count",fill_value=0)
-    df_selection2.columns = df_selection2.columns.str.lower()
+st.markdown("""
+<div>
+<h3> Deck de indicadores - Fea.dev </h3>
+<p style='margin-top: -15px;'> Objetivo: Acompanhar de forma centralizada o grau de engajamento dos membros sobre as atividades administrativas e dos projetos.</p>
+</div>
+""",unsafe_allow_html=True)
 
-    total_columns = []
-    if 'administrativo' in df_selection2.columns:
-        total_columns.append(df_selection2["administrativo"])
-    else:
-        df_selection2["administrativo"] = 0
-        total_columns.append(df_selection2["administrativo"])
-        
-    if 'projeto' in df_selection2.columns:
-        total_columns.append(df_selection2["projeto"])
-    else:
-        df_selection2["projeto"] = 0
-        total_columns.append(df_selection2["projeto"])
- 
-    # Sum all columns that should contribute to total
-    df_selection2["total"] = sum(total_columns)
+df_selection2 = df_selection.pivot_table(index="assignee_username",columns="tipo_atividade",values="id_tarefa",aggfunc="count",fill_value=0)
+df_selection2.columns = df_selection2.columns.str.lower()
+
+total_columns = []
+if 'administrativo' in df_selection2.columns:
+    total_columns.append(df_selection2["administrativo"])
+else:
+    df_selection2["administrativo"] = 0
+    total_columns.append(df_selection2["administrativo"])
     
-    st.markdown("""
-    <div style='line-height: 1.0;'>
-    <p>Quantidade de atividades por tipo:</p>
-    <p style='margin-top: -10px;'>Considerar 'Administrativo' todas as atividades que não estão presentes no click-up dos cases ou dos projetos em edital</p>
-    </div>
-    """, unsafe_allow_html=True)
+if 'projeto' in df_selection2.columns:
+    total_columns.append(df_selection2["projeto"])
+else:
+    df_selection2["projeto"] = 0
+    total_columns.append(df_selection2["projeto"])
+
+# Sum all columns that should contribute to total
+df_selection2["total"] = sum(total_columns)
+
+st.markdown("""
+<div style='line-height: 1.0;margin-top: 20px;'>
+<h5>Quantidade de atividades por tipo:</h5>
+<p style='margin-top: -10px;'>Considerar 'Administrativo' todas as atividades que não estão presentes no click-up dos cases ou dos projetos em edital</p>
+</div>
+""", unsafe_allow_html=True)
 
 
-    df_selection2 = df_selection2.rename(columns={"administrativo":"Administrativo","projeto":"Projeto","total":"Total de Atividades"})
-    df_selection2.index.names = ['Nome']
+df_selection2 = df_selection2.rename(columns={"administrativo":"Administrativo","projeto":"Projeto","total":"Total de Atividades"})
+df_selection2.index.names = ['Nome']
 
-    st.dataframe(df_selection2, use_container_width=True)
-
-
-    st.markdown("""
-    <div style='line-height: 1.0;'>
-    <p>Máximo de dias em aberto:</p>
-    <p style='margin-top: -10px;'>'0' Significa que a atividade está concluída.</p> 
-    <p style='margin-top: -10px;'>'1' Significa que a tarefa ainda está em andamento.</p>
-    </div>
-    """,unsafe_allow_html=True)
-
-    df_selection3 = df_selection.pivot_table(index="nome",columns="atividade_em_aberto",values="dias_em_aberto",aggfunc="max",fill_value=0)
-    df_selection3.columns = df_selection3.columns.str.lower()
-
-    #df_selection3 = df_selection3.sort_values(by="dias_em_aberto",ascending=False)
-
-    #df_selection3 = df_selection3.sort_values(by="dias_em_aberto",ascending=False)
-
-    df_selection3 = df_selection3.rename(columns={"dias_em_aberto":"Dias em Aberto"})
-    
-    df_selection3.index.names = ['Tarefa']
-    
-
-    st.dataframe(df_selection3, use_container_width=True)
+st.dataframe(df_selection2, use_container_width=True)
 
 
-Graphs()
+st.markdown("""
+<div style='line-height: 1.0;'>
+<p>Máximo de dias em aberto:</p>
+<p style='margin-top: -10px;'>'0' Significa que a atividade está concluída.</p> 
+<p style='margin-top: -10px;'>'1' Significa que a tarefa ainda está em andamento.</p>
+</div>
+""",unsafe_allow_html=True)
+
+
+df_selection3 = df_selection.pivot_table(index="nome",columns="atividade_em_aberto",values="dias_em_aberto",aggfunc="max",fill_value=0)
+df_selection3.columns = df_selection3.columns.str.lower()
+
+#df_selection3 = df_selection3.sort_values(by="dias_em_aberto",ascending=False)
+
+#df_selection3 = df_selection3.sort_values(by="dias_em_aberto",ascending=False)
+
+df_selection3 = df_selection3.rename(columns={"dias_em_aberto":"Dias em Aberto"})
+
+df_selection3.index.names = ['Tarefa']
+
+
+st.dataframe(df_selection3, use_container_width=True)
+
 
 
 
@@ -163,7 +168,7 @@ Graphs()
 
 
 
-#def homepage():
+# 
 
 #    with st.expander("My database"):
 
