@@ -143,6 +143,12 @@ st.plotly_chart(fig_bottom, use_container_width=True)
 st.plotly_chart(fig_bottom2, use_container_width=True)
 
 
+df_teste = pd.read_excel("reuniões_semanais.xlsx",sheet_name="Sheet1")
+
+
+df_selection
+
+
 #df_selection.groupby(by=["assignee_username"]).count()[["tipo_atividade"]]
 #teste = px.bar()
 
