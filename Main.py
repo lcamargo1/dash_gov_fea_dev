@@ -14,7 +14,6 @@ import numpy as np
 st.set_page_config(page_title="Governança Fea.dev",layout="wide",
                    initial_sidebar_state="expanded")
 
-
 #theme_plotly = None
 
 df = pd.read_excel("base.xlsx",sheet_name="Planilha1")
@@ -33,6 +32,16 @@ nome = st.sidebar.multiselect(
 df_selection = df.query(
     "assignee_username == @nome"
 )
+
+st.markdown("""
+    <div>
+    <img
+        src=
+
+
+            
+    </div>        
+""")
 
 st.markdown("""
 <div>
