@@ -11,8 +11,11 @@ import plotly.graph_objects as go
 from streamlit_elements import elements, mui, html
 import numpy as np
 
-st.set_page_config(page_title="Governança Fea.dev",layout="wide",
-                   initial_sidebar_state="expanded")
+st.set_page_config(
+    page_title="Governança Fea.dev",
+    layout="wide",  # Já está usando o layout wide, o que é bom
+    initial_sidebar_state="collapsed"  # Mudar para collapsed para dar mais espaço à área principal
+)
 
 #theme_plotly = None
 
@@ -33,19 +36,11 @@ df_selection = df.query(
     "assignee_username == @nome"
 )
 
-st.markdown("""
-    <div>
-    <img
-        src=
-
-
-            
-    </div>        
-""")
+st.image("logo.png",width=200)
 
 st.markdown("""
 <div>
-<h3> Deck de indicadores - Fea.dev </h3>
+<h3 style='margin-top: -70px;'> Deck de indicadores</h3>
 <p style='margin-top: -15px;'> Objetivo: Acompanhar de forma centralizada o grau de engajamento dos membros sobre as atividades administrativas e dos projetos.</p>
 </div>
 """,unsafe_allow_html=True)
@@ -71,7 +66,7 @@ df_selection2["total"] = sum(total_columns)
 
 st.markdown("""
 <div style='line-height: 1.0;margin-top: 20px;'>
-<h5>Quantidade de atividades por tipo:</h5>
+<h5>Quantidade de atividades por membro ativo</h5>
 <p style='margin-top: -10px;'>Considerar 'Administrativo' todas as atividades que não estão presentes no click-up dos cases ou dos projetos em edital</p>
 </div>
 """, unsafe_allow_html=True)
@@ -85,7 +80,7 @@ st.dataframe(df_selection2, use_container_width=True)
 
 st.markdown("""
 <div style='line-height: 1.0;'>
-<p>Máximo de dias em aberto:</p>
+<p>Quantidade máxima de dias em aberto (por atividade)</p>
 <p style='margin-top: -10px;'>'0' Significa que a atividade está concluída.</p> 
 <p style='margin-top: -10px;'>'1' Significa que a tarefa ainda está em andamento.</p>
 </div>
@@ -103,11 +98,49 @@ df_selection3 = df_selection3.rename(columns={"dias_em_aberto":"Dias em Aberto"}
 
 df_selection3.index.names = ['Tarefa']
 
-
 st.dataframe(df_selection3, use_container_width=True)
 
+from plotly.subplots import make_subplots
+
+fig_top = make_subplots(
+    rows=1, 
+    cols=2, 
+    subplot_titles=("Atividades por membro", "Dias em aberto por tarefa")
+)
+
+fig_top.add_trace(go.Bar(x=df["assignee_username"], y=df["atividade_em_aberto"], name="Total de Atividades"), row=1, col=1)
+fig_top.add_trace(go.Bar(x=df["assignee_username"], y=df["atividade_em_aberto"], name="Dias em Aberto"), row=1, col=2)
+fig_top.update_layout(height=400, showlegend=True)
+
+# Gráfico inferior
+fig_bottom = make_subplots(
+    rows=1, 
+    cols=2, 
+    subplot_titles=("Gráfico 3", "Gráfico 4")  # Altere os títulos conforme necessário
+)
+
+fig_bottom.add_trace(go.Bar(x=df["assignee_username"], y=df["atividade_em_aberto"], name="Total de Atividades"), row=1, col=1)
+fig_bottom.add_trace(go.Bar(x=df["assignee_username"], y=df["atividade_em_aberto"], name="Dias em Aberto"), row=1, col=2)
+fig_bottom.update_layout(height=400, showlegend=True)
 
 
+# Gráfico inferior
+fig_bottom2 = make_subplots(
+    rows=1, 
+    cols=3, 
+    subplot_titles=("Gráfico 5", "Gráfico 6")  # Altere os títulos conforme necessário
+)
+
+fig_bottom.add_trace(go.Bar(x=df["assignee_username"], y=df["atividade_em_aberto"], name="Total de Atividades"), row=1, col=1)
+fig_bottom.add_trace(go.Bar(x=df["assignee_username"], y=df["atividade_em_aberto"], name="Dias em Aberto"), row=1, col=2)
+fig_bottom.update_layout(height=400, showlegend=True)
+
+
+
+# Exibir os gráficos um após o outro
+st.plotly_chart(fig_top, use_container_width=True)
+st.plotly_chart(fig_bottom, use_container_width=True)
+st.plotly_chart(fig_bottom2, use_container_width=True)
 
 
 #df_selection.groupby(by=["assignee_username"]).count()[["tipo_atividade"]]
@@ -173,7 +206,7 @@ st.dataframe(df_selection3, use_container_width=True)
 #fig.add_trace(go.Bar(x=["projeto"],y=(base["projeto"])))
 #fig.show()
 
-#print(base)
+#print(base)s
 
 
 
